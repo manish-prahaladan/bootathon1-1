@@ -17,9 +17,10 @@ public class seatSelection extends JFrame{
     int selectedCount = 0;
     String selectedSeats = "";
     String renderedSeats = "";
-    seatSelection(){
+    bookingBeans ob;
+    seatSelection(bookingBeans obj){
 
-
+        ob = obj;
         mother = new JPanel();
         mother.setLayout(new BorderLayout());
 
@@ -80,13 +81,13 @@ public class seatSelection extends JFrame{
                     Class.forName("oracle.jdbc.driver.OracleDriver");
                     Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE","system","safwan");
                     String joinedSeats = getSeats()+selectedSeats;
-                    String query = "update "+"scre1"+" set "+"stat1"+" = ? where day = ?";
+                    String query = "update "+obj.getScreenInfo()+" set "+obj.getTimeInfo()+" = ? where day = ?";
                     PreparedStatement pstmt = con.prepareStatement(query);
                     pstmt.setString(1,joinedSeats);
-                    pstmt.setString(2,"Day1");
+                    pstmt.setString(2, obj.getDayInfo());
 
                     pstmt.executeUpdate();
-                    System.out.println(joinedSeats);
+                    System.out.println("Updating seats"+joinedSeats);
                     con.setAutoCommit(true);
                     con.close();
                 }
@@ -121,15 +122,15 @@ public class seatSelection extends JFrame{
             Class.forName("oracle.jdbc.driver.OracleDriver");
             Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE","system","safwan");
 
-            String query = "select "+"stat1"+" from "+"scre1"+" where day = ?";
+            String query = "select "+ob.getTimeInfo()+" from "+ob.getScreenInfo()+" where day = ?";
             PreparedStatement pstmt = conn.prepareStatement(query);
             //pstmt.setString(1,"stat1");
             //pstmt.setString(2,"scre1");
-            pstmt.setString(1,"Day1");
+            pstmt.setString(1,ob.getDayInfo());
             //Statement stmt = conn.createStatement();
             ResultSet rst = pstmt.executeQuery();
             while(rst.next()){
-                booked = rst.getString("STAT1");
+                booked = rst.getString(ob.getTimeInfo());
             }
             System.out.println("Dates Acquired");
             conn.setAutoCommit(true);
@@ -168,8 +169,5 @@ public class seatSelection extends JFrame{
                 seats.add(but2);
             }
         }
-    }
-    public static void main(String[] args) {
-        new seatSelection();
     }
 }
