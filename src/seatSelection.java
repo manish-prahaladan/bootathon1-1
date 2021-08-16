@@ -3,21 +3,22 @@ import java.awt.event.*;
 import java.sql.*;
 import java.util.Arrays;
 import javax.swing.*;
-import javax.swing.plaf.nimbus.State;
+import java.util.*;
+import java.util.List;
 
 public class seatSelection extends JFrame{
-    //Container co;
+
     JPanel mother,seats;
     JPanel title;
     int seatCount;
 
-    //int index = 0;
+
     String[] bkd;
     int selectedCount = 0;
     String selectedSeats = "";
     String renderedSeats = "";
     seatSelection(){
-        //String booked = "";
+
 
         mother = new JPanel();
         mother.setLayout(new BorderLayout());
@@ -49,6 +50,7 @@ public class seatSelection extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 seatCount = (int)tf.getSelectedItem();
+
                 seats.setVisible(true);
                 changeSeatSelection.setEnabled(true);
                 tf.setEnabled(false);
@@ -66,7 +68,7 @@ public class seatSelection extends JFrame{
                 seats.removeAll();
                 selectedCount = 0;
                 selectedSeats = "";
-                renderSeats(renderedSeats);
+                renderSeats(getSeats());
             }
         });
 
@@ -77,11 +79,13 @@ public class seatSelection extends JFrame{
                 try{
                     Class.forName("oracle.jdbc.driver.OracleDriver");
                     Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE","system","safwan");
-                    String joinedSeats = (renderedSeats+selectedSeats);
-                    String query = "update scre1 set stat1 = (?) where day = 'Day1'";
+                    String joinedSeats = getSeats()+selectedSeats;
+                    String query = "update "+"scre1"+" set "+"stat1"+" = ? where day = ?";
                     PreparedStatement pstmt = con.prepareStatement(query);
                     pstmt.setString(1,joinedSeats);
-                    pstmt.execute();
+                    pstmt.setString(2,"Day1");
+
+                    pstmt.executeUpdate();
                     System.out.println(joinedSeats);
                     con.setAutoCommit(true);
                     con.close();
@@ -89,7 +93,7 @@ public class seatSelection extends JFrame{
                 catch(Exception er){
                     System.out.println("ERROR AT UPDATE CONNECTION"+er);
                 }
-                //System.out.println(renderedSeats+selectedSeats);
+
             }
         });
 
@@ -108,23 +112,27 @@ public class seatSelection extends JFrame{
         add(mother);
         setSize(500,500);
         setVisible(true);
-        renderedSeats += getSeats();
-        System.out.println(renderedSeats);
-        renderSeats(renderedSeats);
-
+        System.out.println("HI");
+        renderSeats(getSeats());
     }
     public String getSeats(){
         String booked = "";
         try{
             Class.forName("oracle.jdbc.driver.OracleDriver");
             Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE","system","safwan");
-            System.out.println("Connection Successful");
-            String query = "select stat1 from scre1 where day = 'Day1'";
-            Statement stmt = conn.createStatement();
-            ResultSet rst = stmt.executeQuery(query);
+
+            String query = "select "+"stat1"+" from "+"scre1"+" where day = ?";
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            //pstmt.setString(1,"stat1");
+            //pstmt.setString(2,"scre1");
+            pstmt.setString(1,"Day1");
+            //Statement stmt = conn.createStatement();
+            ResultSet rst = pstmt.executeQuery();
             while(rst.next()){
                 booked = rst.getString("STAT1");
             }
+            System.out.println("Dates Acquired");
+            conn.setAutoCommit(true);
             conn.close();
         }
         catch (Exception e){
@@ -135,8 +143,10 @@ public class seatSelection extends JFrame{
     public void renderSeats(String booked){
         int index = 0;
         bkd = booked.split("/");
+        List<String> strList = new ArrayList<>(Arrays.asList(bkd));
+        System.out.println(Arrays.toString(bkd));
         for(int i = 1; i <= 50; i++){
-            if(index<bkd.length && Integer.parseInt(bkd[index]) == i){
+            if(strList.contains(String.valueOf(i))){
                 Button but = new Button(String.valueOf(i));
                 but.setEnabled(false);
                 but.setBackground(Color.RED);
