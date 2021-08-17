@@ -1,5 +1,3 @@
-package moviebook;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -14,7 +12,7 @@ public class homepage extends JFrame
     JPanel mother,curPanel,upcPanel,header;
     bookingBeans ob = new bookingBeans();
 
-    homepage() {
+    homepage() throws IOException {
         JButton editprofile,cmovie1,cmovie2,cmovie3,upmovie1,upmovie2,upmovie3;
         JLabel current, upcoming,txt1;
         Font bookingFont = new Font(null).deriveFont(20.0f);
@@ -36,27 +34,34 @@ public class homepage extends JFrame
         upcPanel.setLayout(new GridLayout(1,4,5,5));
 
         cmovie1=new JButton();
-        cmovie1.setIcon(new ImageIcon("bootathon1-main/src/assets/btmn.jpg"));
+        cmovie1.setIcon(new ImageIcon("src/assets/btmn.jpg"));
         cmovie1.setSize(300,600);
         cmovie2=new JButton();
-        cmovie2.setIcon(new ImageIcon("bootathon1-main/src/assets/btmn2.jpg"));
+        cmovie2.setIcon(new ImageIcon("src/assets/btmn2.jpg"));
         cmovie2.setSize(300,300);
         cmovie3=new JButton();
-        cmovie3.setIcon(new ImageIcon("bootathon1-main/src/assets/btmn3.jpg"));
+        cmovie3.setIcon(new ImageIcon("src/assets/btmn3.jpg"));
         cmovie3.setSize(300,300);
 
         upmovie1=new JButton();
-        upmovie1.setIcon(new ImageIcon("bootathon1-main/src/assets/tenet.jpg"));
+        upmovie1.setIcon(new ImageIcon("src/assets/tenet.jpeg"));
         upmovie1.setSize(300,300);
         upmovie2=new JButton();
-        upmovie2.setIcon(new ImageIcon("bootathon1-main/src/assets/dunkirk.jpg"));
+        upmovie2.setIcon(new ImageIcon("src/assets/dunkirk.jpeg"));
         upmovie2.setSize(300,300);
         upmovie3=new JButton();
-        upmovie3.setIcon(new ImageIcon("bootathon1-main/src/assets/interstellar.jpg"));
+        upmovie3.setIcon(new ImageIcon("src/assets/interstellar.jpeg"));
         upmovie3.setSize(300,300);
 
         current.setFont(bookingFont);
         upcoming.setFont(bookingFont);
+
+        movieBookingPage pageOne = new movieBookingPage("src/assets/btmn.jpg","Batman Begins");
+        movieBookingPage pageTwo = new movieBookingPage("src/assets/btmn2.jpg","The Dark Knight");
+        movieBookingPage pageThree = new movieBookingPage("src/assets/btmn3.jpg","The Dark Knight Rises");
+        movieBookingPage pageFour = new movieBookingPage("src/assets/tenet.jpeg","Tenet");
+        movieBookingPage pageFive = new movieBookingPage("src/assets/dunkirk.jpeg","Dunkirk");
+        movieBookingPage pageSix = new movieBookingPage("src/assets/interstellar.jpeg","Interstellar");
 
         txt1=new JLabel("Welcome to SK Cinemas! ");
         txt1.setFont(bookingFont);
@@ -83,18 +88,7 @@ public class homepage extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ob.setMovieInfo("Batman Begins");
-                movieBookingPage obj = null;
-                try
-                {
-                    obj = new movieBookingPage(ob);
-                }
-                catch (IOException ioException)
-                {
-                    ioException.printStackTrace();
-                }
-//                mother.setVisible(false);
-                obj.mother.setVisible(true);
+                pageOne.setVisible(true);
             }
         });
 
@@ -103,18 +97,7 @@ public class homepage extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ob.setMovieInfo("The Dark Knight");
-                movieBookingPage obj = null;
-                try
-                {
-                    obj = new movieBookingPage(ob);
-                }
-                catch (IOException ioException)
-                {
-                    ioException.printStackTrace();
-                }
-//                mother.setVisible(false);
-                obj.mother.setVisible(true);
+                pageTwo.setVisible(true);
             }
         });
 
@@ -123,21 +106,30 @@ public class homepage extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ob.setMovieInfo("The Dark Knight Rises");
-                movieBookingPage obj = null;
-                try
-                {
-                    obj = new movieBookingPage(ob);
-                }
-                catch (IOException ioException)
-                {
-                    ioException.printStackTrace();
-                }
-//                mother.setVisible(false);
-                obj.mother.setVisible(true);
+                pageThree.setVisible(true);
             }
         });
 
+        upmovie1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pageFour.setVisible(true);
+            }
+        });
+
+        upmovie2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pageFive.setVisible(true);
+            }
+        });
+
+        upmovie3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pageSix.setVisible(true);
+            }
+        });
         //        editprofile.addActionListener(new ActionListener() {
 //            @Override
 //            public void actionPerformed(ActionEvent e) {
@@ -174,8 +166,7 @@ public class homepage extends JFrame
         add(mother);
     }
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) throws IOException {
         new homepage();
     }
 }
