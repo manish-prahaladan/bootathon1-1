@@ -12,9 +12,10 @@ import java.util.List;
 public class movieBookingPage extends JFrame {
     JPanel mother,mov1,mov2,mov3,mov4;
 
-    movieBookingPage() throws IOException {
-        bookingBeans ob = new bookingBeans();
+    movieBookingPage(String imgPath,String movieName) throws IOException {
 
+        bookingBeans ob = new bookingBeans();
+        ob.setMovieInfo(movieName);
         Font bookingFont = new Font(null).deriveFont(20.0f);
 
         mother = new JPanel();
@@ -32,9 +33,9 @@ public class movieBookingPage extends JFrame {
         mov3 = new JPanel();
         mov3.setLayout(new GridLayout(3,1,5,5));
 
-        BufferedImage movieOne = ImageIO.read(new File("src/assets/btmn.jpg"));
+        BufferedImage movieOne = ImageIO.read(new File(imgPath));
         JLabel movieOneImg = new JLabel(new ImageIcon(movieOne));
-        JLabel movieOneTitle = new JLabel("Batman Begins",SwingConstants.CENTER);
+        JLabel movieOneTitle = new JLabel(movieName,SwingConstants.CENTER);
         movieOneTitle.setFont(new Font(null).deriveFont(20.0f));
 
         JLabel dateLabel = new JLabel("Select Date",SwingConstants.CENTER);
@@ -241,11 +242,7 @@ public class movieBookingPage extends JFrame {
         mov3.setVisible(true);
 
         mother.setVisible(true);
-        setSize(500,500);
-        setVisible(true);
+        setSize(750,750);
         add(mother);
-    }
-    public static void main(String[] args) throws IOException {
-        new movieBookingPage();
     }
 }
