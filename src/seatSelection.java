@@ -18,6 +18,7 @@ public class seatSelection extends JFrame{
     String selectedSeats = "";
     String renderedSeats = "";
     bookingBeans ob;
+    JButton changeSeatSelection;
     seatSelection(bookingBeans obj){
 
         ob = obj;
@@ -33,7 +34,7 @@ public class seatSelection extends JFrame{
         JLabel tit = new JLabel("Enter the number of viewers", SwingConstants.CENTER);
         tit.setFont(new Font(null).deriveFont(20.0f));
 
-        JButton changeSeatSelection = new JButton("Change Seat Selection");
+        JButton changeSeatCount = new JButton("Change Seat Count");
 
         JComboBox<Integer> tf = new JComboBox<>();
         tf.addItem(1);
@@ -53,19 +54,19 @@ public class seatSelection extends JFrame{
                 seatCount = (int)tf.getSelectedItem();
 
                 seats.setVisible(true);
-                changeSeatSelection.setEnabled(true);
+                changeSeatCount.setEnabled(true);
                 tf.setEnabled(false);
             }
         });
 
 
-        changeSeatSelection.setEnabled(false);
-        changeSeatSelection.addActionListener(new ActionListener() {
+        changeSeatCount.setEnabled(false);
+        changeSeatCount.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 tf.setEnabled(true);
                 seats.setVisible(false);
-                changeSeatSelection.setEnabled(false);
+                changeSeatCount.setEnabled(false);
                 seats.removeAll();
                 selectedCount = 0;
                 selectedSeats = "";
@@ -85,9 +86,12 @@ public class seatSelection extends JFrame{
                     PreparedStatement pstmt = con.prepareStatement(query);
                     pstmt.setString(1,joinedSeats);
                     pstmt.setString(2, obj.getDayInfo());
-
                     pstmt.executeUpdate();
                     System.out.println("Updating seats"+joinedSeats);
+                    obj.setSeatNumbers(selectedSeats);
+                    obj.setCustomerName("John");
+                    paymentsPage payP = new paymentsPage(obj);
+                    payP.setVisible(true);
                     con.setAutoCommit(true);
                     con.close();
                 }
@@ -98,9 +102,23 @@ public class seatSelection extends JFrame{
             }
         });
 
+        changeSeatSelection = new JButton("Change Seat Selection");
+        changeSeatSelection.setFont(new Font(null).deriveFont(20.0f));
+        changeSeatSelection.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                seats.removeAll();
+                renderSeats(getSeats());
+                seats.setVisible(true);
+                changeSeatSelection.setEnabled(false);
+                selectedCount = 0;
+                selectedSeats ="";
+            }
+        });
+        changeSeatSelection.setEnabled(false);
         title.add(tit);
         title.add(tf);
-        title.add(changeSeatSelection);
+        title.add(changeSeatCount);
         title.add(bookTheSeats);
         title.setPreferredSize(new Dimension(500,200));
 
@@ -108,14 +126,17 @@ public class seatSelection extends JFrame{
         title.setVisible(true);
         seats.setVisible(false);
         mother.add(seats,BorderLayout.CENTER);
+        mother.add(changeSeatSelection,BorderLayout.SOUTH);
         mother.setVisible(true);
 
         add(mother);
-        setSize(500,500);
+        setSize(750,750);
         setVisible(true);
         System.out.println("HI");
         renderSeats(getSeats());
     }
+
+
     public String getSeats(){
         String booked = "";
         try{
@@ -141,6 +162,8 @@ public class seatSelection extends JFrame{
         }
         return booked;
     }
+
+
     public void renderSeats(String booked){
         int index = 0;
         bkd = booked.split("/");
@@ -160,8 +183,12 @@ public class seatSelection extends JFrame{
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if(selectedCount < seatCount) {
+                            if(selectedCount < 1){
+                                changeSeatSelection.setEnabled(true);
+                            }
                             selectedSeats += "/"+but2.getLabel();
                             but2.setBackground(Color.GREEN);
+                            but2.setEnabled(false);
                             selectedCount += 1;
                         }
                     }
