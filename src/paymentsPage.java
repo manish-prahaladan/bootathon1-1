@@ -9,22 +9,41 @@ import java.sql.PreparedStatement;
 /*Ticket
 Name:
 Movie:
+Screen
 Seat nos:
 Date:
 Time:
 Amount:
  */
+
 public class paymentsPage extends JFrame {
     JPanel ticket = new JPanel();
     Font paymentFont = new Font(null).deriveFont(20.0f);
     paymentsPage(bookingBeans obj){
-        ticket.setLayout(new GridLayout(7,1));
+        ticket.setLayout(new GridLayout(8,1));
 
         JLabel name = new JLabel("Name: "+obj.getCustomerName());
         name.setFont(paymentFont);
 
         JLabel movie = new JLabel("Movie: "+obj.getMovieInfo());
         movie.setFont(paymentFont);
+
+        String screen = obj.getScreenInfo();
+
+        if(screen.equals("scre1")){
+            screen = "Screen 1";
+        }
+
+        else if(screen.equals("scre2")){
+            screen = "Screen 2";
+        }
+
+        else if(screen.equals("scre3")){
+            screen = "Screen 3";
+        }
+
+        JLabel screenInfo = new JLabel(screen);
+        screenInfo.setFont(paymentFont);
 
         String[] seats = obj.getSeatNumbers().split("/");
         String s = "";
@@ -78,22 +97,25 @@ public class paymentsPage extends JFrame {
         String finalS = s;
         String finalDate = date;
         String finalTime = time;
+        String finalScreen = screen;
         payButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try{
                     Class.forName("oracle.jdbc.driver.OracleDriver");
                     Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE","system","safwan");
-                    String query = "insert into bookingHistory values(?,?,?,?,?,?)";
+                    String query = "insert into bookingHistory values(?,?,?,?,?,?,?)";
                     PreparedStatement pstmt = conn.prepareStatement(query);
                     pstmt.setString(1,obj.getCustomerName());
                     pstmt.setString(2,obj.getMovieInfo());
-                    pstmt.setString(3, finalS);
-                    pstmt.setString(4, finalDate);
-                    pstmt.setString(5, finalTime);
-                    pstmt.setString(6,amt);
+                    pstmt.setString(3, finalScreen);
+                    pstmt.setString(4, finalS);
+                    pstmt.setString(5, finalDate);
+                    pstmt.setString(6, finalTime);
+                    pstmt.setString(7,amt);
                     pstmt.executeUpdate();
                     System.out.println("Booking history inserted");
+                    payButton.setEnabled(false);
                 }
                 catch(Exception er){
                     System.out.println("Booking history table error: "+er);
@@ -103,6 +125,7 @@ public class paymentsPage extends JFrame {
 
         ticket.add(name);
         ticket.add(movie);
+        ticket.add(screenInfo);
         ticket.add(seatsBooked);
         ticket.add(dateInfo);
         ticket.add(timeInfo);
