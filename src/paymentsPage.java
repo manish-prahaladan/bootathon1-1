@@ -16,7 +16,7 @@ Time:
 Amount:
  */
 
-public class paymentsPage extends JFrame {
+public class paymentsPage extends JPanel {
     JPanel ticket = new JPanel();
     Font paymentFont = new Font(null).deriveFont(20.0f);
     paymentsPage(bookingBeans obj){
@@ -115,7 +115,16 @@ public class paymentsPage extends JFrame {
                     pstmt.setString(7,amt);
                     pstmt.executeUpdate();
                     System.out.println("Booking history inserted");
+                    String query2 = "update "+obj.getScreenInfo()+" set "+obj.getTimeInfo()+" = ? where day = ?";
+                    PreparedStatement pstmt2 = conn.prepareStatement(query2);
+                    pstmt2.setString(1,obj.getJoinedSeats());
+                    pstmt2.setString(2, obj.getDayInfo());
+                    pstmt2.executeUpdate();
+                    System.out.println("Updating seats"+obj.getJoinedSeats());
+                    JOptionPane.showMessageDialog(ticket,"Tickets have been booked, view profile for tickets");
                     payButton.setEnabled(false);
+                    conn.setAutoCommit(true);
+                    conn.close();
                 }
                 catch(Exception er){
                     System.out.println("Booking history table error: "+er);
