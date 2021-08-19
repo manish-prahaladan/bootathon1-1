@@ -6,10 +6,10 @@ import javax.swing.*;
 import java.util.*;
 import java.util.List;
 
-public class seatSelection extends JFrame{
+public class seatSelection extends JPanel{
 
-    JPanel mother,seats;
-    JPanel title;
+    JPanel mother,seats,header;
+    JPanel title,side;
     int seatCount;
 
 
@@ -24,6 +24,12 @@ public class seatSelection extends JFrame{
         ob = obj;
         mother = new JPanel();
         mother.setLayout(new BorderLayout());
+
+        header = new JPanel();
+        header.setLayout(new BorderLayout());
+
+        side = new JPanel();
+        side.setLayout(new GridLayout(1,1));
 
         seats = new JPanel();
         seats.setLayout(new GridLayout(5,10,5,5));
@@ -74,31 +80,24 @@ public class seatSelection extends JFrame{
             }
         });
 
+        JLabel sideLabel = new JLabel("Screen this side",SwingConstants.CENTER);
+        sideLabel.setFont(new Font(null).deriveFont(20.0f));
+        side.add(sideLabel);
+
         JButton bookTheSeats = new JButton("Book the Seats");
         bookTheSeats.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try{
-                    Class.forName("oracle.jdbc.driver.OracleDriver");
-                    Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE","system","safwan");
                     String joinedSeats = getSeats()+selectedSeats;
-                    String query = "update "+obj.getScreenInfo()+" set "+obj.getTimeInfo()+" = ? where day = ?";
-                    PreparedStatement pstmt = con.prepareStatement(query);
-                    pstmt.setString(1,joinedSeats);
-                    pstmt.setString(2, obj.getDayInfo());
-                    pstmt.executeUpdate();
-                    System.out.println("Updating seats"+joinedSeats);
+                    obj.setJoinedSeats(joinedSeats);
                     obj.setSeatNumbers(selectedSeats);
                     obj.setCustomerName("John");
+                    removeAll();
+                    repaint();
                     paymentsPage payP = new paymentsPage(obj);
                     payP.setVisible(true);
-                    con.setAutoCommit(true);
-                    con.close();
-                }
-                catch(Exception er){
-                    System.out.println("ERROR AT UPDATE CONNECTION"+er);
-                }
-
+                    add(payP);
+                    revalidate();
             }
         });
 
@@ -121,8 +120,9 @@ public class seatSelection extends JFrame{
         title.add(changeSeatCount);
         title.add(bookTheSeats);
         title.setPreferredSize(new Dimension(500,200));
-
-        mother.add(title,BorderLayout.NORTH);
+        header.add(title, BorderLayout.NORTH);
+        header.add(side,BorderLayout.SOUTH);
+        mother.add(header,BorderLayout.NORTH);
         title.setVisible(true);
         seats.setVisible(false);
         mother.add(seats,BorderLayout.CENTER);
@@ -130,7 +130,8 @@ public class seatSelection extends JFrame{
         mother.setVisible(true);
 
         add(mother);
-        setSize(750,750);
+        //setSize(750,750);
+        setLayout(new GridLayout(1,1));
         setVisible(true);
         System.out.println("HI");
         renderSeats(getSeats());
@@ -145,10 +146,7 @@ public class seatSelection extends JFrame{
 
             String query = "select "+ob.getTimeInfo()+" from "+ob.getScreenInfo()+" where day = ?";
             PreparedStatement pstmt = conn.prepareStatement(query);
-            //pstmt.setString(1,"stat1");
-            //pstmt.setString(2,"scre1");
             pstmt.setString(1,ob.getDayInfo());
-            //Statement stmt = conn.createStatement();
             ResultSet rst = pstmt.executeQuery();
             while(rst.next()){
                 booked = rst.getString(ob.getTimeInfo());
