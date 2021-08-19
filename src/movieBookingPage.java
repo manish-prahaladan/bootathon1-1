@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class movieBookingPage extends JFrame {
-    JPanel mother,mov1,mov2,mov3,mov4;
+public class movieBookingPage extends JPanel {
+    JPanel mother,movieInfo,dateInfo,timeInfo,screenInfo,home;
 
     movieBookingPage(String imgPath,String movieName) throws IOException {
 
@@ -18,20 +18,23 @@ public class movieBookingPage extends JFrame {
         ob.setMovieInfo(movieName);
         Font bookingFont = new Font(null).deriveFont(20.0f);
 
+        home = new JPanel();
+        home.setLayout(new BorderLayout());
+
         mother = new JPanel();
         mother.setLayout(new GridLayout(4,1,5,10));
 
-        mov1 = new JPanel();
-        mov1.setLayout(new GridLayout(1,2,5,5));
+        movieInfo = new JPanel();
+        movieInfo.setLayout(new BorderLayout());
 
-        mov2 = new JPanel();
-        mov2.setLayout(new GridLayout(1,5,5,5));
+        dateInfo = new JPanel();
+        dateInfo.setLayout(new GridLayout(1,5,5,5));
 
-        mov4 = new JPanel();
-        mov4.setLayout(new GridLayout(1,5,5,5));
+        screenInfo = new JPanel();
+        screenInfo.setLayout(new GridLayout(1,5,5,5));
 
-        mov3 = new JPanel();
-        mov3.setLayout(new GridLayout(3,1,5,5));
+        timeInfo = new JPanel();
+        timeInfo.setLayout(new GridLayout(3,1,5,5));
 
         BufferedImage movieOne = ImageIO.read(new File(imgPath));
         JLabel movieOneImg = new JLabel(new ImageIcon(movieOne));
@@ -166,7 +169,7 @@ public class movieBookingPage extends JFrame {
         timingSelection.addItem("Night: 8PM-11PM");
         JButton changeTime = new JButton("Change Timing");
         changeTime.setEnabled(false);
-        JButton bookTickets = new JButton("Book Ticlets");
+        JButton bookTickets = new JButton("Book Tickets");
 
         timingSelection.setFont(bookingFont);
         changeTime.setFont(bookingFont);;
@@ -204,45 +207,53 @@ public class movieBookingPage extends JFrame {
                     JOptionPane.showMessageDialog(mother,"Please select all the fields");
                 }
                 else{
-
                     seatSelection obj = new seatSelection(ob);
-                    mother.setVisible(false);
                     obj.mother.setVisible(true);
+                    home.removeAll();
+                    home.repaint();
+                    home.add(obj);
+                    home.revalidate();
                     System.out.println("Ready to roll");
                 }
             }
         });
 
-        mov1.add(movieOneImg);
-        mov1.add(movieOneTitle);
+        movieInfo.add(movieOneImg,BorderLayout.WEST);
+        movieInfo.add(movieOneTitle,BorderLayout.CENTER);
+        movieInfo.setPreferredSize(new Dimension(200,200));
+        System.out.println(movieOneTitle.getText());
 
-        mov2.add(dateLabel);
-        mov2.add(day1);
-        mov2.add(day2);
-        mov2.add(day3);
-        mov2.add(changeDay);
+        dateInfo.add(dateLabel);
+        dateInfo.add(day1);
+        dateInfo.add(day2);
+        dateInfo.add(day3);
+        dateInfo.add(changeDay);
 
-        mov4.add(screenLabel);
-        mov4.add(screen1);
-        mov4.add(screen2);
-        mov4.add(screen3);
-        mov4.add(changeScreen);
+        screenInfo.add(screenLabel);
+        screenInfo.add(screen1);
+        screenInfo.add(screen2);
+        screenInfo.add(screen3);
+        screenInfo.add(changeScreen);
 
-        mov3.add(timingSelection);
-        mov3.add(changeTime);
-        mov3.add(bookTickets);
+        timeInfo.add(timingSelection);
+        timeInfo.add(changeTime);
+        timeInfo.add(bookTickets);
 
-        mother.add(mov1);
-        mother.add(mov2);
-        mother.add(mov4);
-        mother.add(mov3);
+        home.add(movieInfo,BorderLayout.NORTH);
 
-        mov1.setVisible(true);
-        mov2.setVisible(true);
-        mov3.setVisible(true);
+        mother.add(dateInfo);
+        mother.add(screenInfo);
+        mother.add(timeInfo);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
+        home.add(mother,BorderLayout.CENTER);
+
+        movieInfo.setVisible(true);
+        dateInfo.setVisible(true);
+        timeInfo.setVisible(true);
         mother.setVisible(true);
-        setSize(750,750);
-        add(mother);
+        //setSize(750,750);
+        setLayout(new GridLayout(1,1));
+        add(home);
     }
 }
