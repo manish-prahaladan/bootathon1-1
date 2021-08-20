@@ -1,9 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,16 +13,19 @@ public class homepage extends JFrame
     JLabel current, upcoming,txt1;
     movieBookingPage moviebkPage;
 
-    homepage() throws IOException {
+    homepage() throws Exception {
 
 
         Font bookingFont = new Font(null).deriveFont(20.0f);
+
 
         ob.setCustomerName("John");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         current = new JLabel("Now Playing",JLabel.CENTER);
+        current.setForeground(Color.YELLOW);
         upcoming = new JLabel("Upcoming Movies",JLabel.CENTER);
+        upcoming.setForeground(Color.YELLOW);
 
         CardLayout cardLayout = new CardLayout();
 
@@ -37,22 +36,22 @@ public class homepage extends JFrame
         nav.setLayout(new BorderLayout());
 
         JButton backButton = new JButton("Back");
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(parent,"Home");
-            }
-        });
+        backButton.addActionListener(e -> cardLayout.show(parent,"Home"));
 
         txt1=new JLabel("SK Cinemas",JLabel.CENTER);
         txt1.setFont(bookingFont);
+        txt1.setForeground(Color.YELLOW);
 
 
         JButton profileButton = new JButton("Profile");
+        profileButton.addActionListener(e -> cardLayout.show(parent,"Profile"));
+
         nav.add(backButton,BorderLayout.WEST);
         nav.add(txt1,BorderLayout.CENTER);
         nav.add(profileButton,BorderLayout.EAST);
         nav.setPreferredSize(new Dimension(50,50));
+
+        nav.setBackground(Color.BLACK);
 
         home.add(nav,BorderLayout.NORTH);
 
@@ -112,35 +111,33 @@ public class homepage extends JFrame
         //////////////////////////////////////////////////////////////////////////////////////////
 
         curPanel.add(current);
-        for(int i = 0; i < nowPlayingMovies.size(); i++){
+        for (String nowPlayingMovie : nowPlayingMovies) {
             JButton nowButton = new JButton();
             nowButton.setLayout(new BorderLayout());
 
-            JLabel nowLabel = new JLabel(nowPlayingMovies.get(i),JLabel.CENTER);
+            JLabel nowLabel = new JLabel(nowPlayingMovie, JLabel.CENTER);
             nowLabel.setFont(bookingFont);
 
 
-            nowButton.add(nowLabel,BorderLayout.NORTH);
+            nowButton.add(nowLabel, BorderLayout.NORTH);
 
             JPanel imgPanel = new JPanel();
-            imgPanel.setLayout(new GridLayout(1,1));
-            JLabel imgLbl = new JLabel(new ImageIcon(nowPlayingMap.get(nowPlayingMovies.get(i))));
+            imgPanel.setBackground(Color.BLACK);
+            imgPanel.setLayout(new GridLayout(1, 1));
+            JLabel imgLbl = new JLabel(new ImageIcon(nowPlayingMap.get(nowPlayingMovie)));
             imgPanel.add(imgLbl);
 
-            nowButton.add(imgPanel,BorderLayout.CENTER);
+            nowButton.add(imgPanel, BorderLayout.CENTER);
 
-            nowButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    System.out.println(nowLabel.getText());
-                    try {
-                        moviebkPage = new movieBookingPage(nowPlayingMap.get(nowLabel.getText()),nowLabel.getText());
-                    } catch (IOException ioException) {
-                        ioException.printStackTrace();
-                    }
-                    parent.add(moviebkPage,nowLabel.getText());
-                    cardLayout.show(parent,nowLabel.getText());
+            nowButton.addActionListener(e -> {
+                System.out.println(nowLabel.getText());
+                try {
+                    moviebkPage = new movieBookingPage(nowPlayingMap.get(nowLabel.getText()), nowLabel.getText());
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
                 }
+                parent.add(moviebkPage, nowLabel.getText());
+                cardLayout.show(parent, nowLabel.getText());
             });
 
             curPanel.add(nowButton);
@@ -149,43 +146,41 @@ public class homepage extends JFrame
         //Upcoming Movies
         //////////////////////////////////////////////////////////////////////////////////////////
         upcPanel.add(upcoming);
-        for(int i = 0; i < upComingMovies.size(); i++){
+        for (String upComingMovie : upComingMovies) {
             JButton upcButton = new JButton();
             upcButton.setLayout(new BorderLayout());
 
-            JLabel upcLabel = new JLabel(upComingMovies.get(i),JLabel.CENTER);
+            JLabel upcLabel = new JLabel(upComingMovie, JLabel.CENTER);
             upcLabel.setFont(bookingFont);
 
 
-            upcButton.add(upcLabel,BorderLayout.NORTH);
+            upcButton.add(upcLabel, BorderLayout.NORTH);
 
             JPanel imgPanel = new JPanel();
-            imgPanel.setLayout(new GridLayout(1,1));
-            JLabel imgLbl = new JLabel(new ImageIcon(upComingMap.get(upComingMovies.get(i))));
+            imgPanel.setLayout(new GridLayout(1, 1));
+            imgPanel.setBackground(Color.BLACK);
+            JLabel imgLbl = new JLabel(new ImageIcon(upComingMap.get(upComingMovie)));
             imgPanel.add(imgLbl);
 
-            upcButton.add(imgPanel,BorderLayout.CENTER);
+            upcButton.add(imgPanel, BorderLayout.CENTER);
 
-            upcButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        moviebkPage = new movieBookingPage(upComingMap.get(upcLabel.getText()),upcLabel.getText());
-                    } catch (IOException ioException) {
-                        ioException.printStackTrace();
-                    }
-                    parent.add(moviebkPage,upcLabel.getText());
-                    cardLayout.show(parent,upcLabel.getText());
+            upcButton.addActionListener(e -> {
+                try {
+                    moviebkPage = new movieBookingPage(upComingMap.get(upcLabel.getText()), upcLabel.getText());
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
                 }
+                parent.add(moviebkPage, upcLabel.getText());
+                cardLayout.show(parent, upcLabel.getText());
             });
 
             upcPanel.add(upcButton);
         }
 
-
+        profile pro = new profile(ob);
 
         parent.add(mother,"Home");
-
+        parent.add(pro,"Profile");
 
         mother.add(curPanel);
         mother.add(upcPanel);
@@ -199,9 +194,11 @@ public class homepage extends JFrame
         home.setVisible(true);
         home.add(parent,BorderLayout.CENTER);
         add(home);
+        curPanel.setBackground(Color.BLACK);
+        upcPanel.setBackground(Color.BLACK);
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         new homepage();
     }
 }
